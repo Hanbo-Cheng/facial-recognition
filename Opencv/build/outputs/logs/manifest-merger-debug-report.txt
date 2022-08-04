@@ -1,0 +1,49 @@
+-- Merging decision tree log ---
+manifest
+ADDED from D:\Android_test\Opencv\java\AndroidManifest.xml:2:1-14:12
+INJECTED from D:\Android_test\Opencv\java\AndroidManifest.xml:2:1-14:12
+INJECTED from D:\Android_test\Opencv\java\AndroidManifest.xml:2:1-14:12
+	package
+		ADDED from D:\Android_test\Opencv\java\AndroidManifest.xml:3:7-27
+		INJECTED from D:\Android_test\Opencv\java\AndroidManifest.xml
+		INJECTED from D:\Android_test\Opencv\java\AndroidManifest.xml
+	android:versionName
+		ADDED from D:\Android_test\Opencv\java\AndroidManifest.xml:5:7-34
+	xmlns:android
+		ADDED from D:\Android_test\Opencv\java\AndroidManifest.xml:2:11-69
+	android:versionCode
+		ADDED from D:\Android_test\Opencv\java\AndroidManifest.xml:4:7-33
+uses-permission#android.permission.CAMERA
+ADDED from D:\Android_test\Opencv\java\AndroidManifest.xml:8:5-64
+	android:name
+		ADDED from D:\Android_test\Opencv\java\AndroidManifest.xml:8:22-62
+uses-feature#android.hardware.camera
+ADDED from D:\Android_test\Opencv\java\AndroidManifest.xml:10:5-59
+	android:name
+		ADDED from D:\Android_test\Opencv\java\AndroidManifest.xml:10:19-57
+uses-feature#android.hardware.camera.autofocus
+ADDED from D:\Android_test\Opencv\java\AndroidManifest.xml:11:5-69
+	android:name
+		ADDED from D:\Android_test\Opencv\java\AndroidManifest.xml:11:19-67
+uses-feature#android.hardware.camera.front
+ADDED from D:\Android_test\Opencv\java\AndroidManifest.xml:12:5-65
+	android:name
+		ADDED from D:\Android_test\Opencv\java\AndroidManifest.xml:12:19-63
+uses-feature#android.hardware.camera.front.autofocus
+ADDED from D:\Android_test\Opencv\java\AndroidManifest.xml:13:5-75
+	android:name
+		ADDED from D:\Android_test\Opencv\java\AndroidManifest.xml:13:19-73
+uses-sdk
+INJECTED from D:\Android_test\Opencv\java\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from D:\Android_test\Opencv\java\AndroidManifest.xml
+INJECTED from D:\Android_test\Opencv\java\AndroidManifest.xml
+INJECTED from D:\Android_test\Opencv\java\AndroidManifest.xml
+INJECTED from D:\Android_test\Opencv\java\AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from D:\Android_test\Opencv\java\AndroidManifest.xml
+		ADDED from D:\Android_test\Opencv\java\AndroidManifest.xml
+		INJECTED from D:\Android_test\Opencv\java\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from D:\Android_test\Opencv\java\AndroidManifest.xml
+		ADDED from D:\Android_test\Opencv\java\AndroidManifest.xml
+		INJECTED from D:\Android_test\Opencv\java\AndroidManifest.xml
