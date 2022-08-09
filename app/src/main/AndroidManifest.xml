@@ -20,7 +20,8 @@
 
         <activity
             android:name="com.example.test.MainActivity"
-            android:rotationAnimation="seamless"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|orientation"
             tools:targetApi="O"
             android:exported="true">
             <intent-filter>
