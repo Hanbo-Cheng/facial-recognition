@@ -3,11 +3,17 @@ package com.example.test;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -45,6 +51,11 @@ public class MainActivity extends AppCompatActivity {
     private Scalar faceRectColor = new Scalar(255, 0, 0, 255);
     private int fps = 3;
     private List<Rect> facesCache = new ArrayList<>();
+    private SensorManager sensorManager=null;
+    private Sensor sensor=null;
+    private float x,y,z;
+
+
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -71,6 +82,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        sensorManager = (SensorManager)this.getSystemService(SENSOR_SERVICE);
+        sensor=sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
         if (!OpenCVLoader.initDebug())
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION, this, mLoaderCallback);
         else {
@@ -80,6 +94,9 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+
+//        String str = "x=" + x + "; y=" + y + "; z=" + z;
+//        Toast.makeText(getApplicationContext(), str, Toast.LENGTH_LONG).show();
         //System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         initWindowSettings();
         setContentView(R.layout.activity_main);
@@ -87,6 +104,19 @@ public class MainActivity extends AppCompatActivity {
         initPermission();
         initClassifierFace();
     }
+
+    private SensorEventListener lsn  = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            x = event.values[SensorManager.DATA_X];
+            y = event.values[SensorManager.DATA_Y];
+            z = event.values[SensorManager.DATA_Z];
+        }
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+            // TODO Auto-generated method stub
+        }
+    };
 
     /**
      * 人脸
@@ -126,24 +156,24 @@ public class MainActivity extends AppCompatActivity {
         cameraView = findViewById(R.id.camera);
         //添加监听
         cameraView.setCvCameraViewListener(cvListener);
-//        btn1 = findViewById(R.id.btn1);
-//        btn1.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (isBack) {
-//                    cameraView.setCameraIndex(CameraBridgeViewBase.CAMERA_ID_FRONT);
-//                    isBack = false;
-//                } else {
-//                    cameraView.setCameraIndex(CameraBridgeViewBase.CAMERA_ID_BACK);
-//                    isBack = true;
-//                }
-//
-//                if (cameraView != null) {
-//                    cameraView.disableView();
-//                    cameraView.enableView();
-//                }
-//            }
-//        });
+        btn1 = findViewById(R.id.btn1);
+        btn1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isBack) {
+                    cameraView.setCameraIndex(CameraBridgeViewBase.CAMERA_ID_FRONT);
+                    isBack = false;
+                } else {
+                    cameraView.setCameraIndex(CameraBridgeViewBase.CAMERA_ID_BACK);
+                    isBack = true;
+                }
+
+                if (cameraView != null) {
+                    cameraView.disableView();
+                    cameraView.enableView();
+                }
+            }
+        });
     }
 
     /**
@@ -197,25 +227,43 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
             mRgba = inputFrame.rgba();
+            boolean isrotate=false;
+            sensorManager.registerListener(lsn, sensor, SensorManager.SENSOR_DELAY_GAME);
+//            String str = "x=" + x + "; y=" + y + "; z=" + z;
+//            Toast.makeText(getApplicationContext(), str, Toast.LENGTH_LONG).show();
+            // 旋转输入帧
+//            if (isBack) {
+//                Core.rotate(mRgba, mRgba, Core.ROTATE_90_COUNTERCLOCKWISE);
+//                Core.flip(mRgba, mRgba, 1);
+//            } else {
+//                Core.rotate(mRgba, mRgba, Core.ROTATE_90_CLOCKWISE);
+//            }
+
+            if(x<y){
+                isrotate=true;
+                Core.rotate(mRgba, mRgba, Core.ROTATE_90_COUNTERCLOCKWISE);
+            }
+            Core.flip(mRgba, mRgba, 1);
             //隔3帧进行一次人脸检测
             if (fps == 3) {
                 float mRelativeFaceSize = 0.2f;
-                if (mAbsoluteFaceSize == 0) {
-                    int height = mRgba.rows();
-                    if (Math.round(height * mRelativeFaceSize) > 0) {
-                        mAbsoluteFaceSize = Math.round(height * mRelativeFaceSize);
-                    }
+
+                int height = mRgba.rows();
+                if (Math.round(height * mRelativeFaceSize) > 0) {
+                    mAbsoluteFaceSize = Math.round(height * mRelativeFaceSize);
                 }
-                MatOfRect faces = new MatOfRect();
-                if (classifierFace != null) {
-                    classifierFace.detectMultiScale(mRgba, faces, 1.05, 2, 2,
-                            new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size());
-                }
-                //把检测到的人脸坐标存在全局变量
-                facesCache = faces.toList();
-                //标识归0
-                fps = 0;
             }
+            MatOfRect faces = new MatOfRect();
+            if (classifierFace != null) {
+                classifierFace.detectMultiScale(mRgba, faces, 1.05, 2, 2,
+                        new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size());
+            }
+            //把检测到的人脸坐标存在全局变量
+            facesCache = faces.toList();
+            //标识归0
+            fps = 0;
+
+
 
             //使用缓存的人脸坐标信息进行绘制
             for (Rect rect : facesCache) {
@@ -223,9 +271,33 @@ public class MainActivity extends AppCompatActivity {
             }
             //标识进1
             fps++;
+
+            if(isrotate){
+                Core.rotate(mRgba, mRgba, Core.ROTATE_90_COUNTERCLOCKWISE);
+            }
+
             return mRgba;
         }
     };
+    private String getOrientation(){
+        if(this.getResources().getConfiguration().orientation== Configuration.ORIENTATION_PORTRAIT){
+            return "portrait";
+        }
+        else{
+            return "landscape";
+        }
+    }
+    @Override
+    public void onResume(){
+        //3.注册SensorEventListener，调用registerListener()方法来注册,第三个参数是检测的灵敏精确度,
+        sensorManager.registerListener(lsn, sensor, SensorManager.SENSOR_DELAY_GAME);
+        super.onResume();
+    }
+    @Override
+    public void onPause(){
+        sensorManager.unregisterListener(lsn);
+        super.onPause();
+    }
 
 
 }
