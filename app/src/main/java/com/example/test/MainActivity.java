@@ -239,12 +239,18 @@ public class MainActivity extends AppCompatActivity {
 //                Core.rotate(mRgba, mRgba, Core.ROTATE_90_CLOCKWISE);
 //            }
 
-            if(x<y){
+            if(x<y && isBack==false){
                 isrotate=true;
                 Core.rotate(mRgba, mRgba, Core.ROTATE_90_COUNTERCLOCKWISE);
+                Core.flip(mRgba, mRgba, 1);
             }
-            Core.flip(mRgba, mRgba, 1);
+
+//            else if(isBack){
+//                Core.flip(mRgba, mRgba, 1);
+//            }
+
             //隔3帧进行一次人脸检测
+            MatOfRect faces = new MatOfRect();
             if (fps == 3) {
                 float mRelativeFaceSize = 0.2f;
 
@@ -252,17 +258,15 @@ public class MainActivity extends AppCompatActivity {
                 if (Math.round(height * mRelativeFaceSize) > 0) {
                     mAbsoluteFaceSize = Math.round(height * mRelativeFaceSize);
                 }
+                //标识归0
+                if (classifierFace != null) {
+                    classifierFace.detectMultiScale(mRgba, faces, 1.05, 2, 2,
+                            new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size());
+                }
+                //把检测到的人脸坐标存在全局变量
+                facesCache = faces.toList();
+                fps = 0;
             }
-            MatOfRect faces = new MatOfRect();
-            if (classifierFace != null) {
-                classifierFace.detectMultiScale(mRgba, faces, 1.05, 2, 2,
-                        new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size());
-            }
-            //把检测到的人脸坐标存在全局变量
-            facesCache = faces.toList();
-            //标识归0
-            fps = 0;
-
 
 
             //使用缓存的人脸坐标信息进行绘制
