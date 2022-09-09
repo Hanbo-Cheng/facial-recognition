@@ -244,6 +244,11 @@ public class MainActivity extends AppCompatActivity {
                 Core.rotate(mRgba, mRgba, Core.ROTATE_90_COUNTERCLOCKWISE);
                 Core.flip(mRgba, mRgba, 1);
             }
+            if(x<y && isBack){
+                isrotate=true;
+                Core.rotate(mRgba, mRgba, Core.ROTATE_90_CLOCKWISE);
+                //Core.flip(mRgba, mRgba, 1);
+            }
 
 //            else if(isBack){
 //                Core.flip(mRgba, mRgba, 1);
@@ -276,7 +281,11 @@ public class MainActivity extends AppCompatActivity {
             //标识进1
             fps++;
 
-            if(isrotate){
+            if(isrotate &&isBack==false){
+                Core.rotate(mRgba, mRgba, Core.ROTATE_90_COUNTERCLOCKWISE);
+            }
+            if(isrotate && isBack){
+                //Core.flip(mRgba, mRgba, 1);
                 Core.rotate(mRgba, mRgba, Core.ROTATE_90_COUNTERCLOCKWISE);
             }
 
